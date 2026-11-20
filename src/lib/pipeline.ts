@@ -244,7 +244,10 @@ export async function checkProof(
 
   emit({ type: "stage", stage: "read", message: input.image ? "Reading your handwriting" : "Reading your proof" });
   // Boot the Lean VM while the model reads the proof.
-  const workerPromise = LeanWorker.start();
+  const workerPromise = LeanWorker.start().then((w) => {
+    w.warm();
+    return w;
+  });
   workerPromise.catch(() => {});
 
   let worker: LeanWorker | null = null;

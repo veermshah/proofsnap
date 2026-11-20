@@ -25,7 +25,16 @@ export type LeanRun = {
  * The VM has no network access, so generated Lean code cannot reach anything.
  */
 export class LeanWorker {
+  private warming: Promise<unknown> | null = null;
   private constructor(private sandbox: Sandbox) {}
+
+  /** Load Mathlib into the page cache in the background, so the first real check is fast. */
+  warm() {
+    if (!this.warming) {
+      this.warming = this.check("import Mathlib\n\ntheorem warm_up : True := trivial", "warm_up").catch(() => {});
+    }
+    return this.warming;
+  }
 
   static async start(): Promise<LeanWorker> {
     const snapshotId = process.env.LEAN_SNAPSHOT_ID;
@@ -41,6 +50,7 @@ export class LeanWorker {
   }
 
   async check(code: string, theoremName: string): Promise<LeanRun> {
+    if (this.warming && theoremName !== "warm_up") await this.warming;
     const started = Date.now();
     const file = `Proof_${Math.random().toString(36).slice(2, 10)}.lean`;
     const body = `${code.trimEnd()}\n\n#print axioms ${theoremName}\n`;
