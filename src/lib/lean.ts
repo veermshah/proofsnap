@@ -82,6 +82,12 @@ export class LeanWorker {
     };
   }
 
+  /** Save this VM as a snapshot that never expires. Stops the VM. */
+  async resnapshot(): Promise<string> {
+    const snap = await this.sandbox.snapshot({ expiration: 0 });
+    return snap.snapshotId;
+  }
+
   async stop() {
     try {
       await this.sandbox.stop();
@@ -96,6 +102,11 @@ export function parseLeanOutput(output: string, file: string): LeanMessage[] {
   const header = /^(.*?):(\d+):(\d+): (error|warning|info|information): ?(.*)$/;
   let current: LeanMessage | null = null;
   for (const line of output.split("\n")) {
+    if (/^'.*' (depends on axioms|does not depend on any axioms)/.test(line)) {
+      if (current) messages.push(current);
+      current = null;
+      continue;
+    }
     const m = line.match(header);
     if (m && (m[1].endsWith(file) || m[1].endsWith(".lean"))) {
       if (current) messages.push(current);
