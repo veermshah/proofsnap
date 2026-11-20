@@ -1,5 +1,5 @@
 import { checkProof, type ProgressEvent } from "@/lib/pipeline";
-import { SAMPLES } from "@/lib/samples";
+import { EVAL_CASES } from "@/lib/eval-cases";
 
 export const maxDuration = 300;
 
@@ -10,13 +10,20 @@ export async function GET(req: Request) {
   if (!process.env.PROOFSNAP_ADMIN_SECRET || url.searchParams.get("key") !== process.env.PROOFSNAP_ADMIN_SECRET) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
-  const sample = SAMPLES.find((s) => s.id === url.searchParams.get("sample"));
-  const text = sample?.text ?? url.searchParams.get("text") ?? "";
+  const id = url.searchParams.get("case") ?? url.searchParams.get("sample");
+  const evalCase = EVAL_CASES.find((c) => c.id === id);
+  const text = evalCase?.text ?? url.searchParams.get("text") ?? "";
   if (!text) return Response.json({ error: "pass sample or text" }, { status: 400 });
   const events: ProgressEvent[] = [];
   try {
     const result = await checkProof({ text }, (e) => events.push(e));
+    const firstError = result.steps.find((s) => s.status === "error")?.id ?? null;
     return Response.json({
+      expected: evalCase ? { verdict: evalCase.expectVerdict, errorStep: evalCase.expectErrorStep } : null,
+      match: evalCase
+        ? result.verdict === evalCase.expectVerdict && (evalCase.expectErrorStep === null || firstError === evalCase.expectErrorStep)
+        : null,
+      firstErrorStep: firstError,
       verdict: result.verdict,
       headline: result.headline,
       statementFaithful: result.statementFaithful,
