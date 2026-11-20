@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.107",
     "@vercel/sandbox": "^4.1.0",
     "ai": "^7.0.178",
     "next": "16.4.6",

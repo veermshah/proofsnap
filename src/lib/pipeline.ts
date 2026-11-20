@@ -1,10 +1,21 @@
-import { generateText, Output } from "ai";
+import { generateText, Output, type LanguageModel } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import { LeanWorker, type LeanRun, STANDARD_AXIOMS } from "./lean";
 
 export const THEOREM_NAME = "student_claim";
-const MODEL = process.env.PROOFSNAP_MODEL ?? "anthropic/claude-opus-5.5";
-const FAST_MODEL = process.env.PROOFSNAP_FAST_MODEL ?? MODEL;
+const MODEL_ID = process.env.PROOFSNAP_MODEL ?? "anthropic/claude-opus-5.5";
+const FAST_MODEL_ID = process.env.PROOFSNAP_FAST_MODEL ?? MODEL_ID;
+
+/** Use the Anthropic API directly when a key is set, otherwise Vercel AI Gateway (OIDC). */
+function resolveModel(id: string): LanguageModel {
+  if (process.env.ANTHROPIC_API_KEY && id.startsWith("anthropic/")) {
+    return anthropic(id.slice("anthropic/".length).replace(/\./g, "-"));
+  }
+  return id;
+}
+const MODEL = resolveModel(MODEL_ID);
+const FAST_MODEL = resolveModel(FAST_MODEL_ID);
 const MAX_REPAIRS = Number(process.env.PROOFSNAP_MAX_REPAIRS ?? 2);
 
 // ---------- types ----------

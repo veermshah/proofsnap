@@ -21,6 +21,7 @@ Snap a photo of a handwritten proof. ProofSnap translates each step into Lean 4,
 | Name | Purpose |
 | --- | --- |
 | `LEAN_SNAPSHOT_ID` | Sandbox snapshot with Lean + Mathlib at `/vercel/sandbox/checker` |
+| `ANTHROPIC_API_KEY` | Optional. If set, calls Anthropic directly instead of Vercel AI Gateway |
 | `PROOFSNAP_MODEL` | Optional. Model used for formalization (default `anthropic/claude-opus-5.5`) |
 | `PROOFSNAP_FAST_MODEL` | Optional. Model for reading and explaining |
 | `PROOFSNAP_MAX_REPAIRS` | Optional. Repair passes (default 2) |
