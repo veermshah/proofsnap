@@ -13,7 +13,7 @@ Snap a photo of a handwritten proof. ProofSnap translates each step into Lean 4,
 ## Stack
 
 - Next.js (App Router) on Vercel
-- AI SDK with Vercel AI Gateway (`anthropic/claude-opus-5.5` by default)
+- AI SDK with Vercel AI Gateway (`google/gemini-2.5-flash` by default, which the free tier allows)
 - Vercel Sandbox running Lean 4 + Mathlib
 
 ## Environment variables
@@ -22,7 +22,7 @@ Snap a photo of a handwritten proof. ProofSnap translates each step into Lean 4,
 | --- | --- |
 | `LEAN_SNAPSHOT_ID` | Sandbox snapshot with Lean + Mathlib at `/vercel/sandbox/checker` |
 | `ANTHROPIC_API_KEY` | Optional. If set, calls Anthropic directly instead of Vercel AI Gateway |
-| `PROOFSNAP_MODEL` | Optional. Model used for formalization (default `anthropic/claude-opus-5.5`) |
+| `PROOFSNAP_MODEL` | Optional. Model used for formalization (default `google/gemini-2.5-flash`; set e.g. `anthropic/claude-opus-5.5` once the team has AI Gateway credits) |
 | `PROOFSNAP_FAST_MODEL` | Optional. Model for reading and explaining |
 | `PROOFSNAP_MAX_REPAIRS` | Optional. Repair passes (default 2) |
 
