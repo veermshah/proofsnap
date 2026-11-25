@@ -4,7 +4,7 @@ import { z } from "zod";
 import { LeanWorker, type LeanRun, STANDARD_AXIOMS } from "./lean";
 
 export const THEOREM_NAME = "student_claim";
-const MODEL_ID = process.env.PROOFSNAP_MODEL ?? "google/gemini-3.5-flash";
+const MODEL_ID = process.env.PROOFSNAP_MODEL ?? "google/gemini-2.5-flash";
 const FAST_MODEL_ID = process.env.PROOFSNAP_FAST_MODEL ?? MODEL_ID;
 
 /** Use the Anthropic API directly when a key is set, otherwise Vercel AI Gateway (OIDC). */
